@@ -78,11 +78,42 @@
     ("\${[[:alpha:]]+[[:alnum:]_]*}" . font-lock-variable-name-face)
     ("\$([[:alpha:]]+[[:alnum:]_]*)" . font-lock-variable-name-face)))
 
+
+(defun dotenv-mode-prase-line (envline)
+  (if-let ((line (s-trim envline)))
+      (if (and (stringp line)
+	       (not (string-empty-p line))
+	       (not (s-starts-with-p "#" line)))
+	  (let ((entry (s-split-up-to "=" line 1)))
+	    `(,(car entry)
+	      ,(car (cdr entry)))))))
+
+
+;;;autoload
+(defun dotenv-mode-apply-line (envline)
+  (interactive (list (thing-at-point 'line)))
+  nil
+  (if-let ((entry (dotenv-mode-prase-line envline)))
+      (apply #'setenv entry)))
+
+
+;;;autoload
+(defun dotenv-mode-apply-all ()
+  (interactive)
+  (seq-filter (lambda (x) x)
+	      (mapcar #'dotenv-mode-apply-line
+		      (s-split "\n"
+			       (buffer-substring-no-properties
+				(point-min) (point-max))))))
+
+
 ;;;###autoload
 (define-derived-mode dotenv-mode prog-mode ".env"
   "Major mode for `.env' files."
   :abbrev-table nil
   :syntax-table dotenv-mode-syntax-table
+  (define-key dotenv-mode-map "\C-c\C-l" 'dotenv-mode-apply-line)
+  (define-key dotenv-mode-map "\C-c\C-c" 'dotenv-mode-apply-all)
   (setq-local font-lock-defaults '((dotenv-mode-keywords))))
 
 ;;;###autoload
