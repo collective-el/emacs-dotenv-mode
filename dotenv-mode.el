@@ -104,7 +104,8 @@
 	      (mapcar #'dotenv-mode-apply-line
 		      (s-split "\n"
 			       (buffer-substring-no-properties
-				(point-min) (point-max))))))
+				(point-min) (point-max)))))
+  (message "dotenv applied from buffer!!"))
 
 
 ;;;###autoload
