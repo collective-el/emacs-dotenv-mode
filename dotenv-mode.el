@@ -205,9 +205,10 @@ Example::
   (let* ((buf (find-file-noselect dotenv-file-path))
 	 (envs (with-current-buffer buf (dotenv-get-definitions-from-buffer))))
     (kill-buffer buf)
-
     (setq process-environment
-	  (append envs dotenv-original-process-environment))))
+	  (append
+	   (mapcar #'dotenv-format-entry envs)
+	   dotenv-original-process-environment))))
 
 
 (provide 'dotenv-mode)
