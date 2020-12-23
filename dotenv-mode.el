@@ -199,6 +199,7 @@ Example::
      resp))
 
 
+;;;###autoload
 (defun dotenv-load ()
   (interactive)
   (let* ((buf (find-file-noselect dotenv-file-path))
