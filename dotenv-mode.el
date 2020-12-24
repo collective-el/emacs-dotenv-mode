@@ -138,6 +138,11 @@
 (defvar dotenv-file-path nil
   "Path to dotenv file.")
 
+
+(defvar dotenv-file-path-list nil  ;; TODO: Support multiple dotenv file.
+  "Path to dotenv file list.")
+
+
 (defvar dotenv-original-process-environment (copy-sequence process-environment)
   "Original process environment variables.
 
