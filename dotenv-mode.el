@@ -30,6 +30,7 @@
 ;; (add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . dotenv-mode)) ;; for optionally supporting additional file extensions such as `.env.test' with this major mode
 
 ;;; Code:
+(require 'dash)
 
 (defgroup dotenv ()
   "Major mode for editing .env files."
@@ -135,11 +136,7 @@
   "Regexp for dotenv style line.")
 
 
-(defvar dotenv-file-path nil
-  "Path to dotenv file.")
-
-
-(defvar dotenv-file-path-list nil  ;; TODO: Support multiple dotenv file.
+(defvar dotenv-file-path-list nil
   "Path to dotenv file list.")
 
 
@@ -204,16 +201,21 @@ Example::
      resp))
 
 
+(defun dotenv-get-process-environment-entry-from-file-path-list (file-path-list)
+  "Get process-envinronment value list from the dotenv style files list."
+  (->> file-path-list
+       (mapcar #'dotenv-get-process-environment-from-dotenv-file)
+       (-flatten)
+       (mapcar #'dotenv-format-entry)))
+
+
 ;;;###autoload
 (defun dotenv-load ()
   (interactive)
-  (let* ((buf (find-file-noselect dotenv-file-path))
-	 (envs (with-current-buffer buf (dotenv-get-definitions-from-buffer))))
-    (kill-buffer buf)
-    (setq process-environment
-	  (append
-	   (mapcar #'dotenv-format-entry envs)
-	   dotenv-original-process-environment))))
+  (setq process-environment
+	(append
+	 (dotenv-get-process-environment-entry-from-file-path-list dotenv-file-path-list)
+	 dotenv-original-process-environment)))
 
 
 (provide 'dotenv-mode)
