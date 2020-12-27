@@ -205,7 +205,8 @@ Example::
 (defun dotenv-get-process-environment-entry-from-file-path-list (file-path-list)
   "Get process-envinronment value list from the dotenv style files list."
   (->> file-path-list
-       (mapcar #'dotenv-get-process-environment-from-dotenv-file)
+       (mapcar (lambda (file-path)
+		 (dotenv-with-open-file file-path (dotenv-get-definitions-from-buffer))))
        (-flatten)
        (mapcar #'dotenv-format-entry)))
 
