@@ -30,6 +30,8 @@
 ;; (add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . dotenv-mode)) ;; for optionally supporting additional file extensions such as `.env.test' with this major mode
 
 ;;; Code:
+(require 's)
+
 
 (defgroup dotenv ()
   "Major mode for editing .env files."
